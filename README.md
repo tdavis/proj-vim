@@ -1,4 +1,4 @@
-_This mirrors the content in vim.org_
+_This mirrors the content on vim.org_
 
 ## script type
 utility
