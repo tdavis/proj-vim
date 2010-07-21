@@ -25,6 +25,7 @@ DOS .ini
 * notes - Path to a text file with project notes
 * path - Path to the project root directory
 * vim - Path to a file with vim commands
+* docksend - Upload all files in the project on save if the TransmitFtp plugin is available
 
 ### Sample Project File
 
@@ -32,6 +33,7 @@ DOS .ini
     [project]
     path = /path/to/project
     vim = /path/to/settings_file.vim
+    docksend ; boolean option
 
     [path-with-spaces]
     path = /path/to/my\ project ; Escape spaces with \
@@ -48,6 +50,7 @@ DOS .ini
 These are all prefixed with g:ProjMapLeader by default.
 
 * g:ProjOpenMap (default: 'o') - Calls :Proj
+* g:ProjAddMap (default: 'a') - Calls :ProjAdd
 * g:ProjInfoMap (default: 'i') - Calls :ProjInfo
 * g:ProjNotesMap (default: 'n') - Calls :ProjNotes
 
