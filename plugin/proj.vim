@@ -1,9 +1,10 @@
 " ============================================================================
-" File:        proj.vim
+" File: proj.vim
 " Description: Simple Vim project tool
-" Maintainer:  Thomas Allen <thomasmallen@gmail.com>
+" Maintainer: Thomas Allen <thomasmallen@gmail.com>
 " ============================================================================
 let s:ProjVersion = '1.2'
+let s:auInit = 0
 
 " Section: Core functions {{{1
 " Section: Utilities {{{2
@@ -78,9 +79,15 @@ function! s:ParseIni(ini)
 
             else
                 " Option (key/value pair)
-                let option = map(split(line, '='), 's:strip(v:val)')
-                let key = option[0]
-                let parsed[section][key] = split(option[1], ';')[0]
+                let optline = map(split(line, '='), 's:strip(v:val)')
+
+                if len(optline) > 1
+                    let optval = split(optline[1], ';')[0]
+                else
+                    let optval = 1
+                end
+
+                let parsed[section][optline[0]] = optval
             end
         end
     endfor
@@ -167,6 +174,19 @@ function! s:RefreshCurrent()
             echo 'Browser disabled'
         end
     end
+
+    if s:auInit == 0
+        let s:auInit = 1
+        au BufWritePost * silent call s:TransmitDocksend()
+    end
+endfunction
+
+function! s:TransmitDocksend()
+    if s:Current['docksend'] && exists('*TransmitFtpSendFile')
+        if match(expand('%:p:h'), s:Current['path']) == 0
+            call TransmitFtpSendFile()
+        end
+    end
 endfunction
 
 " Section: Miscellaneous actions {{{2
@@ -243,6 +263,7 @@ call s:Set('g:ProjSplitMethod', 'vsp')
 
 call s:Set('g:ProjDisableMappings', 0)
 call s:Set('g:ProjMapLeader', '<Leader>p')
+call s:Set('g:ProjAddMap', g:ProjMapLeader . 'a')
 call s:Set('g:ProjOpenMap', g:ProjMapLeader . 'o')
 call s:Set('g:ProjNotesMap', g:ProjMapLeader . 'n')
 call s:Set('g:ProjInfoMap', g:ProjMapLeader . 'i')
@@ -260,6 +281,7 @@ endfunction
 
 if g:ProjDisableMappings != 1
     call s:NormalMap(g:ProjOpenMap, ':Proj ')
+    call s:NormalMap(g:ProjAddMap, ':ProjAdd ')
     call s:NormalMap(g:ProjInfoMap, ':ProjInfo<CR>')
     call s:NormalMap(g:ProjNotesMap, ':ProjNotes<CR>')
 end
