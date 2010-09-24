@@ -39,20 +39,22 @@ DOS .ini
     path = /path/to/my\ project ; Escape spaces with \
 
 ### Global Options
-* g:ProjFileBrowser (default: 'NERDTree') - The filebrowser command. Set to 'off' to not open a filebrowser.
+* g:ProjDisableMappings (default: 0) - Set to 1 to turn off all mappings defined by this plugin
 * g:ProjFile (default: '~/.vimproj') - Path to the project file.
+* g:ProjFileBrowser (default: 'NERDTree') - The filebrowser command. Set to 'off' to not open a filebrowser.
+* g:ProjMapLeader (default: '<Leader>p') - The prefix for default mappings
 * g:ProjNoteFile (default: 'notes.txt') - Path to the project notes file
 * g:ProjSplitMethod (default: 'vsp') - Command to use when opening a file with a Proj command such as ProjFile.
-* g:ProjDisableMappings (default: 0) - Set to 1 to turn off all mappings defined by this plugin
-* g:ProjMapLeader (default: '<Leader>p') - The prefix for default mappings
 
 ### Default maps
 These are all prefixed with g:ProjMapLeader by default.
 
-* g:ProjOpenMap (default: 'o') - Calls :Proj
 * g:ProjAddMap (default: 'a') - Calls :ProjAdd
+* g:ProjFileMap (default: 'f') - Calls :ProjFile
 * g:ProjInfoMap (default: 'i') - Calls :ProjInfo
 * g:ProjNotesMap (default: 'n') - Calls :ProjNotes
+* g:ProjOpenMap (default: 'o') - Calls :Proj
+* g:ProjReload (default: 'r') - Calls :ProjReload
 
 ## install details
 1. Extract the downloaded proj.tbz file
