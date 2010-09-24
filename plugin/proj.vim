@@ -3,7 +3,7 @@
 " Description: Simple Vim project tool
 " Maintainer: Thomas Allen <thomasmallen@gmail.com>
 " ============================================================================
-let s:ProjVersion = '1.3.1'
+let s:ProjVersion = '1.4'
 
 let s:auInit = 0
 
