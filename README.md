@@ -7,14 +7,16 @@ utility
 Proj lets you save settings for your project in a simple file.
 
 ### Commands
-* :Proj <project> - Open project named <project> (tab-completes)
-* :ProjAdd <name> - Add the project "name" to the project file and reload
-* :ProjFile - Open the project file in a split
-* :ProjInfo - Show all of the current project's settings in the status line
-* :ProjNotes - Open the project notes file in a split
-* :ProjRefresh - Reload the current project
-* :ProjReload - Reload the project file
-* :ProjVim - Open the project's vim settings file in a split
+* :Proj <project> - Open project named <project> (tab-completes).
+* :ProjAdd  - Prompts to add a new project in the current directory.
+* :ProjFile - Open the project file in a split>
+* :ProjInfo - Show all of the current project's settings in the status line.
+* :ProjMenu - Open a menu with all of these commands.
+* :ProjNotes - Open the project notes file in a split.
+* :ProjOpen - Prompt to open a project.
+* :ProjRefresh - Reload the current project.
+* :ProjReload - Reload the project file.
+* :ProjVim - Open the project's vim settings file in a split.
 
 
 ### File Syntax
@@ -52,9 +54,11 @@ These are all prefixed with g:ProjMapLeader by default.
 * g:ProjAddMap (default: 'a') - Calls :ProjAdd
 * g:ProjFileMap (default: 'f') - Calls :ProjFile
 * g:ProjInfoMap (default: 'i') - Calls :ProjInfo
+* g:ProjMenuMap (default: 'm') - Calls :ProjMenu
 * g:ProjNotesMap (default: 'n') - Calls :ProjNotes
-* g:ProjOpenMap (default: 'o') - Calls :Proj
-* g:ProjReload (default: 'r') - Calls :ProjReload
+* g:ProjOpenMap (default: 'o') - Calls :ProjOpen
+* g:ProjReloadMap (default: 'r') - Calls :ProjReload
+* g:ProjVim (default: 'v') - Calls :ProjVim
 
 ## install details
 1. Extract the downloaded proj.tbz file
