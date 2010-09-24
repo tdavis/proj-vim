@@ -252,22 +252,25 @@ function! s:Set(var, val)
   " Args: a:var (string), a:val (string)
   " Assigns a:val to a:var unless a:var is already defined
   if !exists(a:var)
-    exec 'let ' . a:var . ' = "' . a:val . '"'
+    exec 'let ' . a:var . ' = ' . string(a:val)
   end
 endfunction
 
 " Section: Global variables {{{2
-call s:Set('g:ProjFileBrowser', 'NERDTree')
 call s:Set('g:ProjFile', '~/.vimproj')
+call s:Set('g:ProjFileBrowser', 'NERDTree')
 call s:Set('g:ProjNoteFile', 'notes.txt')
 call s:Set('g:ProjSplitMethod', 'vsp')
 
 call s:Set('g:ProjDisableMappings', 0)
 call s:Set('g:ProjMapLeader', '<Leader>p')
+
 call s:Set('g:ProjAddMap', g:ProjMapLeader . 'a')
-call s:Set('g:ProjOpenMap', g:ProjMapLeader . 'o')
-call s:Set('g:ProjNotesMap', g:ProjMapLeader . 'n')
+call s:Set('g:ProjFileMap', g:ProjMapLeader . 'f')
 call s:Set('g:ProjInfoMap', g:ProjMapLeader . 'i')
+call s:Set('g:ProjNotesMap', g:ProjMapLeader . 'n')
+call s:Set('g:ProjOpenMap', g:ProjMapLeader . 'o')
+call s:Set('g:ProjReloadMap', g:ProjMapLeader . 'r')
 
 call s:LoadProjectsRaw()
 
@@ -281,10 +284,12 @@ function! s:NormalMap(key, cmd)
 endfunction
 
 if g:ProjDisableMappings != 1
-  call s:NormalMap(g:ProjOpenMap, ':Proj ')
   call s:NormalMap(g:ProjAddMap, ':ProjAdd ')
+  call s:NormalMap(g:ProjFileMap, ':ProjFile<CR>')
   call s:NormalMap(g:ProjInfoMap, ':ProjInfo<CR>')
   call s:NormalMap(g:ProjNotesMap, ':ProjNotes<CR>')
+  call s:NormalMap(g:ProjOpenMap, ':Proj ')
+  call s:NormalMap(g:ProjReloadMap, ':ProjReload<CR>')
 end
 
 " Section: Commands {{{1
@@ -303,4 +308,4 @@ command! ProjFile :call s:OpenFile()
 command! ProjInfo :call s:DumpInfo()
 command! ProjNotes :call s:OpenNotes()
 
-" vim: set foldmethod=marker :
+";pad;pad vim: set foldmethod=marker :
