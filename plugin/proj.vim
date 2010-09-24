@@ -292,7 +292,8 @@ function! g:ProjComplete(A, L, P)
   end
 endfunction
 
--command! -complete=customlist,g:Complete -nargs=1 Proj :call s:OpenProject('<args>')
+
+command! -complete=customlist,g:ProjComplete -nargs=1 Proj :call s:OpenProject('<args>')
 command! ProjAdd     :call s:PromptAdd()
 command! ProjFile    :call s:OpenFile()
 command! ProjInfo    :call s:DumpInfo()
