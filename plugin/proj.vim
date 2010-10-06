@@ -284,6 +284,8 @@ function! s:PromptMenu()
     call s:PromptOpen()
   elseif choice == 'r'
     call s:LoadProjects()
+  elseif choice == 't'
+    call s:PromptOpenTab()
   elseif choice == 'v'
     call s:OpenVimFile()
   end
