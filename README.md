@@ -14,6 +14,7 @@ Proj lets you save settings for your project in a simple file.
 * :ProjMenu - Open a menu with all of these commands.
 * :ProjNotes - Open the project notes file in a split.
 * :ProjOpen - Prompt to open a project.
+* :ProjOpenTab - Prompt to open a project for the open tab. Projects opened this way will only be active in the opened tab, so that each tab can contain a project.
 * :ProjRefresh - Reload the current project.
 * :ProjReload - Reload the project file.
 * :ProjVim - Open the project's vim settings file in a split.
@@ -57,6 +58,7 @@ These are all prefixed with g:ProjMapLeader by default.
 * g:ProjMenuMap (default: 'm') - Calls :ProjMenu
 * g:ProjNotesMap (default: 'n') - Calls :ProjNotes
 * g:ProjOpenMap (default: 'o') - Calls :ProjOpen
+* g:ProjOpenTabMap (default: 't') - Calls :ProjOpenTab
 * g:ProjReloadMap (default: 'r') - Calls :ProjReload
 * g:ProjVim (default: 'v') - Calls :ProjVim
 
