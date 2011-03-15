@@ -1,12 +1,16 @@
-*proj.txt*  Proj: Simple project tool
-            For Vim version 7.x
+proj.txt    For Vim version 7.x     Last change: 2011 March 15
 
                                By Thomas Allen
                              thomasmallen@gmail.com
 
+                               Testrunner Support
+                                  By Tom Davis
+                             tom@recursivedream.com
+
                                                    *proj* *proj-plugin* *Proj*
 
-Proj lets you save settings for your project in a simple file.
+Proj lets you save settings for your project in a simple file. It also
+supports configuring test runners.
 
                                                                *Proj-commands*
 Commands:
@@ -40,6 +44,9 @@ Commands:
                                                                   *ProjReload*
     :ProjReload
      Reload the project file.
+                                                                    *ProjTest*
+    :ProjTest
+     Run the project's tests.
                                                                      *ProjVim*
     :ProjVim
      Open the project's vim settings file in a split.
@@ -57,6 +64,11 @@ Available Settings:
     vim - Path to a file with vim commands
     docksend - Upload all files in the project on save if the TransmitFtp
       plugin is available
+    test - The test command to run
+    host - Optional host to connect to for test running (e.g. me@host)
+    venv - A Python `virtualenv` name to activate prior to testing (or path,
+           if you don't have them in one place)
+    prefix - Common command to precede other shell commands with
 
                                                                  *Proj-sample*
 Sample Project File:
@@ -65,9 +77,32 @@ Sample Project File:
     path = /path/to/project
     vim = /path/to/settings_file.vim
     docksend ; boolean option
+    test = nosetests
+    host = me@host
+    venv = myproject
+    prefix = source ~/.keychain/`hostname`-sh
 
     [path-with-spaces]
     path = /path/to/my\ project ; Escape spaces with \
+
+                                                             *Proj-testrunner*
+Test Runner:
+
+    The test runner is very simple and supports various customizations to
+    allow it to run tests on remote hosts, etc. You could use it to run just
+    about any command, though the error parsing only works with Python's
+    `unittest`-like output.
+
+    Given the |Proj-sample| above, running {ProjTest} will result in the
+    following command being run:
+    >
+        source ~/.keychain/`hostname`-sh && ssh me@host \
+        "source ~/env/myproject/bin/activate && nosetests"
+<
+    The output of the test will be parsed to look for failed tests; if
+    there are any, they will be added to the |quickfix-window| and
+    linked to the test file/line that failed. If there are no failures,
+    nothing will happen.
 
                                          *Proj-global-options* *Proj-mappings*
 Global Options:
@@ -80,6 +115,8 @@ Global Options:
     * g:ProjNoteFile (default: 'notes.txt') - Path to the project notes file
     * g:ProjSplitMethod (default: 'vsp') - Command to use when opening a file
         with a Proj command such as ProjFile.
+    * g:ProjVenvRoot (default: '~/env') - Path to Python `virtualenv` root (if
+        applicable).
 
     Default maps: These are all prefixed with g:ProjMapLeader by default.
         g:ProjAddMap (default: 'a') - Calls :ProjAdd

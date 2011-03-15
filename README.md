@@ -1,10 +1,10 @@
-_This mirrors the content on vim.org_
-
 ## script type
 utility
 
 ## description
-Proj lets you save settings for your project in a simple file.
+Proj lets you save settings for your project in a simple file. For Python
+projects, it provides settings for configuring a testrunner and has the ability
+to parse failures and add them to your quickfix window.
 
 ### Commands
 * :Proj <project> - Open project named <project> (tab-completes).
@@ -17,18 +17,25 @@ Proj lets you save settings for your project in a simple file.
 * :ProjOpenTab - Prompt to open a project for the open tab. Projects opened this way will only be active in the opened tab, so that each tab can contain a project.
 * :ProjRefresh - Reload the current project.
 * :ProjReload - Reload the project file.
+* :ProjTest - Run the project's tests.
 * :ProjVim - Open the project's vim settings file in a split.
-
 
 ### File Syntax
 DOS .ini
 
-### Available Settings
+### Project Settings
 * browser - A custom command for the filebrowser
 * notes - Path to a text file with project notes
 * path - Path to the project root directory
 * vim - Path to a file with vim commands
 * docksend - Upload all files in the project on save if the TransmitFtp plugin is available
+
+### Test Settings
+* test - The test command to run
+* host - Optional host to connect to for test running (e.g. me@host)
+* venv - A Python `virtualenv` name to activate prior to testing (or path, if
+  you don't have them in one place)
+* prefix - Common command to precede other shell commands with
 
 ### Sample Project File
 
@@ -37,6 +44,10 @@ DOS .ini
     path = /path/to/project
     vim = /path/to/settings_file.vim
     docksend ; boolean option
+    test = nosetests
+    host = me@host
+    venv = myproject
+    prefix = source ~/.keychain/`hostname`-sh
 
     [path-with-spaces]
     path = /path/to/my\ project ; Escape spaces with \
@@ -48,6 +59,7 @@ DOS .ini
 * g:ProjMapLeader (default: '<Leader>p') - The prefix for default mappings
 * g:ProjNoteFile (default: 'notes.txt') - Path to the project notes file
 * g:ProjSplitMethod (default: 'vsp') - Command to use when opening a file with a Proj command such as ProjFile.
+* g:ProjVenvRoot (default: '~/env') - Path to Python `virtualenv` root (if applicable).
 
 ### Default maps
 These are all prefixed with g:ProjMapLeader by default.

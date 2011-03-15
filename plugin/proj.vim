@@ -1,7 +1,7 @@
 " ============================================================================
 " File: proj.vim
-" Description: Simple Vim project tool
-" Maintainer: Thomas Allen <thomasmallen@gmail.com>
+" Description: Simple Vim project/testrunner tool
+" Maintainer:  Tom Davis <tom@recursivedream.com>
 " ============================================================================
 let s:ProjVersion = '1.5.1'
 
@@ -92,7 +92,7 @@ function! s:Valid(project)
 endfunction
 
 function! s:GetProject(name)
-  if has_key(g:Projects, a:name) == 1 && type(g:Projects[a:name]) == 4
+  if has_key(g:Projects, a:name) == 1 && s:Valid(g:Projects[a:name])
     exec join(['let', 's:Current', '=', 'g:Projects["' . a:name . '"]'], ' ')
     return 1
   else
@@ -176,6 +176,62 @@ function! s:TransmitDocksend()
   end
 endfunction
 
+function! s:TestProject(args)
+  if !has('python')
+      call s:echoError('requires +python')
+      finish
+  endif
+  if has_key(s:Current, 'test')
+    let a:cmd = join([s:Current['test'], a:args], ' ')
+    let a:cmd_orig = a:cmd
+    if has_key(s:Current, 'venv')
+      let a:activate = join([g:ProjVenvRoot, s:Current['venv'], 'bin', 'activate'], '/')
+      let a:cmd = join(['source ' . a:activate, a:cmd], ' && ')
+    end
+    if has_key(s:Current, 'host')
+      let a:cmd = join(['ssh', s:Current['host'], '"', a:cmd, '"'], ' ')
+    end
+    if has_key(s:Current, 'prefix')
+      let a:cmd = join([s:Current['prefix'], a:cmd], ' && ')
+    endif
+    echo 'Running ' . a:cmd_orig
+    redir => a:output
+    silent exec '!' . a:cmd
+    redir END
+    call s:QFixErrors(a:output)
+  end
+endfunction
+
+function! s:QFixErrors(output)
+python << EOF
+import vim
+import os
+import re
+
+in_error = False
+entries = []
+test_file = re.compile(r'File "(.+(?:tests\.py)|(?:test_.+\.py))", line (\d+)')
+for line in vim.eval('a:output').split('\n'):
+  if line.startswith('ERROR'):
+    in_error = line.strip().split(' ', 1)[1]
+    continue
+  if in_error:
+    match = test_file.search(line)
+    if match:
+      path, ln = match.groups()
+      root = os.path.split(vim.eval('s:Current["path"]'))[1]
+      start = path.find(root) + len(root) + 1
+      relpath = os.path.normpath(path[start:])
+      cmd = "call setqflist({ 'filename': '%s', 'lnum': %s, 'text': '%s' })" \
+                  % (relpath, ln, in_error.replace("'", "\\'"))
+      entries.append({ 'filename': relpath, 'lnum': ln, 'text': in_error.replace("'", "\\'") })
+      in_error = False
+if entries:
+  vim.command('call setqflist(%s)' % entries)
+  vim.command('bo cope')
+EOF
+endfunction
+
 function! s:AddProject(name)
   let item = ['', '[' . a:name . ']', 'path = ' . getcwd()]
   if(s:ReadFile('s:CurrentFile'))
@@ -234,6 +290,7 @@ function! s:Set(var, val)
 endfunction
 
 call s:Set('g:ProjFile', '~/.vimproj')
+call s:Set('g:ProjVenvRoot', '~/env')
 call s:Set('g:ProjFileBrowser', 'NERDTree')
 call s:Set('g:ProjNoteFile', 'notes.txt')
 call s:Set('g:ProjSplitMethod', 'vsp')
@@ -269,6 +326,7 @@ function! s:PromptMenu()
                    \." (n)otes\n"
                    \." (o)pen\n"
                    \." (t)ab open\n"
+                   \." t(e)st\n"
                    \." (r)eload\n"
                    \." (v)im\n"
                    \."? ")
@@ -288,6 +346,8 @@ function! s:PromptMenu()
     call s:PromptOpenTab()
   elseif choice == 'v'
     call s:OpenVimFile()
+  elseif choice == 'e':
+    call s:TestProject()
   end
 endfunction
 
@@ -332,6 +392,7 @@ endfunction
 
 
 command! -complete=customlist,g:ProjComplete -nargs=1 Proj :call s:OpenProject('<args>', 1)
+command! -complete=file -nargs=? ProjTest :call s:TestProject('<args>')
 command! ProjAdd     :call s:PromptAdd()
 command! ProjFile    :call s:OpenFile()
 command! ProjInfo    :call s:DumpInfo()
@@ -339,6 +400,6 @@ command! ProjMenu    :call s:PromptMenu()
 command! ProjNotes   :call s:OpenNotes()
 command! ProjOpen    :call s:PromptOpen()
 command! ProjOpenTab :call s:PromptOpenTab()
-command! ProjRefresh :call s:RefreshCurrent()
+command! ProjRefresh :call s:RefreshCurrent(1)
 command! ProjReload  :call s:LoadProjects()
 command! ProjVim     :call s:OpenVimFile()
