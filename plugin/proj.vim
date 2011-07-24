@@ -205,7 +205,7 @@ function! s:TestProject(args)
     endif
     echo 'Running ' . a:cmd
     redir => a:output
-    exec '!' . a:cmd
+    silent exec '!' . a:cmd
     redir END
     call s:QFixErrors(a:output)
   end
@@ -219,7 +219,7 @@ import re
 
 in_error = False
 entries = []
-test_file = re.compile(r'File "(.+(?:tests\.py)|(?:test_.+\.py))", line (\d+)')
+test_file = re.compile(r'File "(.+)", line (\d+)')
 for line in vim.eval('a:output').split('\n'):
   if line.startswith('ERROR') or line.startswith('FAIL'):
     in_error = line.strip().split(' ', 1)[1]
