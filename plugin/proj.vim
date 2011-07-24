@@ -182,7 +182,16 @@ function! s:TestProject(args)
       finish
   endif
   if has_key(s:Current, 'test')
-    let a:cmd = join([s:Current['test'], a:args], ' ')
+    " expand where possible
+    let parts = []
+    for part in split(s:Current['test'], ' ')
+      if match(part, '^%') == 0
+        call add(parts, expand(part))
+      else
+        call add(parts, part)
+      end
+    endfor
+    let a:cmd = join([join(parts, ' '), a:args], ' ')
     let a:cmd_orig = a:cmd
     if has_key(s:Current, 'venv')
       let a:activate = join([g:ProjVenvRoot, s:Current['venv'], 'bin', 'activate'], '/')
@@ -194,9 +203,9 @@ function! s:TestProject(args)
     if has_key(s:Current, 'prefix')
       let a:cmd = join([s:Current['prefix'], a:cmd], ' && ')
     endif
-    echo 'Running ' . a:cmd_orig
+    echo 'Running ' . a:cmd
     redir => a:output
-    silent exec '!' . a:cmd
+    exec '!' . a:cmd
     redir END
     call s:QFixErrors(a:output)
   end
@@ -212,7 +221,7 @@ in_error = False
 entries = []
 test_file = re.compile(r'File "(.+(?:tests\.py)|(?:test_.+\.py))", line (\d+)')
 for line in vim.eval('a:output').split('\n'):
-  if line.startswith('ERROR'):
+  if line.startswith('ERROR') or line.startswith('FAIL'):
     in_error = line.strip().split(' ', 1)[1]
     continue
   if in_error:
